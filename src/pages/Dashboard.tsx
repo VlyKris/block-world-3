@@ -2,26 +2,43 @@
 // This is the entry point for users who have just signed in
 
 import { Protected } from "@/lib/protected-page";
+import { WorldSelector } from "@/components/WorldSelector";
+import { MinecraftGame } from "@/components/minecraft/MinecraftGame";
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { ArrowLeft } from "lucide-react";
 import { motion } from "framer-motion";
-import { Loader } from "lucide-react";
 
 export default function Dashboard() {
+  const [selectedWorldId, setSelectedWorldId] = useState<string | null>(null);
+
+  const handleBackToWorlds = () => {
+    setSelectedWorldId(null);
+  };
+
   return (
     <Protected>
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.5 }}
-        className="flex flex-col items-center justify-center"
-      >
-        <div className="max-w-5xl mx-auto relative px-4">
-          {/* landing page goes here */}
-          <div className="flex items-center justify-center min-h-[200px]">
-            <Loader className="h-8 w-8 animate-spin mr-4" />
-            Generating your project...
-          </div>
+      {selectedWorldId ? (
+        <div className="relative w-full h-screen">
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            className="absolute top-4 left-4 z-50"
+          >
+            <Button
+              onClick={handleBackToWorlds}
+              variant="outline"
+              className="bg-black/50 border-white/20 text-white hover:bg-black/70"
+            >
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              Back to Worlds
+            </Button>
+          </motion.div>
+          <MinecraftGame worldId={selectedWorldId} />
         </div>
-      </motion.div>
+      ) : (
+        <WorldSelector onWorldSelect={setSelectedWorldId} />
+      )}
     </Protected>
   );
 }
